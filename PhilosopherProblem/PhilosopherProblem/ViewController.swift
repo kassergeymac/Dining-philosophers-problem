@@ -47,7 +47,7 @@ class ViewController: UIViewController {
                 self.currentTickCounter += 1
                 if self.state == .eating {
                     if(self.currentTickCounter == self.eatingTime) {
-                        print("Philosopher \(name) put fork with id \(self.forkLeft.id) and \(self.forkRight.id)")
+                        print("Philosopher \(name) put fork \(self.forkLeft.id) and fork \(self.forkRight.id)")
                         self.forkLeft.isBusy = false
                         self.forkRight.isBusy = false
                         self.state = .restingAfterEating
@@ -87,13 +87,13 @@ class ViewController: UIViewController {
                 fork.isBusy = true
                 self.state = .eating
                 self.currentTickCounter = 0
-                print("Philosopher \(name) took fork with id \(fork.id)")
+                print("Philosopher \(name) took fork \(fork.id)")
             }
         }
         
         class Fork {
             private var _isBusy = false
-            let isolationQueue = DispatchQueue(label: "ForkIsolationQueue")
+            let isolationQueue: DispatchQueue
             let id: Int
             var isBusy: Bool {
                 get {
@@ -110,21 +110,21 @@ class ViewController: UIViewController {
                 }
             }
             
-            init(id: Int, isBusy: Bool) {
+            init(id: Int, isBusy: Bool, targetIsolationQueue: DispatchQueue) {
                 self.id = id
                 self._isBusy = isBusy
+                self.isolationQueue = DispatchQueue(label: "ForkIsolationQueue", attributes: .initiallyInactive)
+                self.isolationQueue.setTarget(queue: targetIsolationQueue)
+                self.isolationQueue.activate()
             }
         }
         
-        let forks = [Fork(id: 1, isBusy: false),
-                     Fork(id: 2, isBusy: false),
-                     Fork(id: 3, isBusy: false),
-                     Fork(id: 4, isBusy: false),
-                     Fork(id: 5, isBusy: false)]
         let mutualQueue = DispatchQueue(label: "ForksIsolationQueue")
-        for fork in forks {
-            fork.isolationQueue.setTarget(queue: mutualQueue)
-        }
+        let forks = [Fork(id: 1, isBusy: false, targetIsolationQueue: mutualQueue),
+                     Fork(id: 2, isBusy: false, targetIsolationQueue: mutualQueue),
+                     Fork(id: 3, isBusy: false, targetIsolationQueue: mutualQueue),
+                     Fork(id: 4, isBusy: false, targetIsolationQueue: mutualQueue),
+                     Fork(id: 5, isBusy: false, targetIsolationQueue: mutualQueue)]
         
         let philosophers = [Philosopher(name: "1",
                                         eatingTime: 2,
