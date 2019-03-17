@@ -93,18 +93,18 @@ class ViewController: UIViewController {
         
         class Fork {
             private var _isBusy = false
-            static let isolationQueue = DispatchQueue(label: "ForkIsolationQueue")
+            let isolationQueue = DispatchQueue(label: "ForkIsolationQueue")
             let id: Int
             var isBusy: Bool {
                 get {
                     var newValue = false
-                    Fork.isolationQueue.sync {
+                    self.isolationQueue.sync {
                         newValue = _isBusy
                     }
                     return newValue
                 }
                 set(newBusyStatus) {
-                    Fork.isolationQueue.sync {
+                    self.isolationQueue.sync {
                         _isBusy = newBusyStatus
                     }
                 }
@@ -121,15 +121,19 @@ class ViewController: UIViewController {
                      Fork(id: 3, isBusy: false),
                      Fork(id: 4, isBusy: false),
                      Fork(id: 5, isBusy: false)]
+        let mutualQueue = DispatchQueue(label: "ForksIsolationQueue")
+        for fork in forks {
+            fork.isolationQueue.setTarget(queue: mutualQueue)
+        }
         
         let philosophers = [Philosopher(name: "1",
-                                        eatingTime: 4,
+                                        eatingTime: 2,
                                         restingTimeAfterEating: 2,
                                         restingTimeAfterFailToEat: 1,
                                         forkLeft:forks[0],
                                         forkRight:forks[1]),
                             Philosopher(name: "2",
-                                        eatingTime: 2,
+                                        eatingTime: 3,
                                         restingTimeAfterEating: 2,
                                         restingTimeAfterFailToEat: 2,
                                         forkLeft:forks[1],
@@ -141,13 +145,13 @@ class ViewController: UIViewController {
                                         forkLeft:forks[2],
                                         forkRight:forks[3]),
                             Philosopher(name: "4",
-                                        eatingTime: 2,
+                                        eatingTime: 5,
                                         restingTimeAfterEating: 2,
                                         restingTimeAfterFailToEat: 2,
                                         forkLeft:forks[3],
                                         forkRight:forks[4]),
                             Philosopher(name: "5",
-                                        eatingTime: 4,
+                                        eatingTime: 6,
                                         restingTimeAfterEating: 2,
                                         restingTimeAfterFailToEat: 2,
                                         forkLeft:forks[4],
