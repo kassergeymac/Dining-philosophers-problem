@@ -31,8 +31,6 @@ class ViewController: UIViewController {
             var forkLeft: Fork
             var forkRight: Fork
             
-            var busyFork: Fork? = nil
-            
             var state: PhilosopherState = PhilosopherState.restingAfterEating
             var currentTickCounter: Int = 0
             
@@ -49,9 +47,9 @@ class ViewController: UIViewController {
                 self.currentTickCounter += 1
                 if self.state == .eating {
                     if(self.currentTickCounter == self.eatingTime) {
-                        print("Philosopher \(name) put fork with id \(self.busyFork?.id)")
-                        self.busyFork?.isBusy = false
-                        self.busyFork = nil
+                        print("Philosopher \(name) put fork with id \(self.forkLeft.id) and \(self.forkRight.id)")
+                        self.forkLeft.isBusy = false
+                        self.forkRight.isBusy = false
                         self.state = .restingAfterEating
                         self.currentTickCounter = 0
                     }
@@ -86,17 +84,36 @@ class ViewController: UIViewController {
             }
             
             private func eatWithFork(_ fork: Fork) {
-                self.busyFork = fork
-                self.busyFork?.isBusy = true
+                fork.isBusy = true
                 self.state = .eating
                 self.currentTickCounter = 0
-                print("Philosopher \(name) took fork with id \(self.busyFork?.id)")
+                print("Philosopher \(name) took fork with id \(fork.id)")
             }
         }
         
-        struct Fork {
+        class Fork {
+            private var _isBusy = false
+            static let isolationQueue = DispatchQueue(label: "ForkIsolationQueue")
             let id: Int
-            var isBusy: Bool
+            var isBusy: Bool {
+                get {
+                    var newValue = false
+                    Fork.isolationQueue.sync {
+                        newValue = _isBusy
+                    }
+                    return newValue
+                }
+                set(newBusyStatus) {
+                    Fork.isolationQueue.sync {
+                        _isBusy = newBusyStatus
+                    }
+                }
+            }
+            
+            init(id: Int, isBusy: Bool) {
+                self.id = id
+                self._isBusy = isBusy
+            }
         }
         
         let forks = [Fork(id: 1, isBusy: false),
