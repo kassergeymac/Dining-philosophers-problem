@@ -45,12 +45,8 @@ class Philosopher {
         }
         if self.state == .restingAfterEating {
             if(self.currentTickCounter == self.restingTimeAfterEating) {
-                if(!self.forkLeft.isBusy) {
+                if ((!self.forkLeft.isBusy) && (!self.forkRight.isBusy)) {
                     self.eatWithFork(self.forkLeft)
-                    return
-                }
-                if(!self.forkRight.isBusy) {
-                    self.eatWithFork(self.forkRight)
                     return
                 }
                 print("Philosopher \(name) failed to eat.")
@@ -61,11 +57,8 @@ class Philosopher {
         }
         if self.state == .restingAfterFailToEat {
             if(self.currentTickCounter == self.restingTimeAfterEating) {
-                if(!self.forkLeft.isBusy) {
+                if ((!self.forkLeft.isBusy) && (!self.forkRight.isBusy)) {
                     self.eatWithFork(self.forkLeft)
-                    return
-                }
-                if(!self.forkRight.isBusy) {
                     self.eatWithFork(self.forkRight)
                     return
                 }
