@@ -45,11 +45,11 @@ class Philosopher {
         }
         if self.state == .restingAfterEating {
             if(self.currentTickCounter == self.restingTimeAfterEating) {
-                if(!(self.forkLeft.isBusy)) {
+                if(!self.forkLeft.isBusy) {
                     self.eatWithFork(self.forkLeft)
                     return
                 }
-                if(!(self.forkRight.isBusy)) {
+                if(!self.forkRight.isBusy) {
                     self.eatWithFork(self.forkRight)
                     return
                 }
@@ -60,12 +60,12 @@ class Philosopher {
             return
         }
         if self.state == .restingAfterFailToEat {
-            if(self.currentTickCounter == self.restingTimeAfterFailToEat) {
-                if(!(self.forkLeft.isBusy)) {
+            if(self.currentTickCounter == self.restingTimeAfterEating) {
+                if(!self.forkLeft.isBusy) {
                     self.eatWithFork(self.forkLeft)
                     return
                 }
-                if(!(self.forkRight.isBusy)) {
+                if(!self.forkRight.isBusy) {
                     self.eatWithFork(self.forkRight)
                     return
                 }
@@ -86,38 +86,9 @@ class Philosopher {
     }
 }
 
-class Fork {
-    let dispathBlockQueue = DispatchQueue(label: "kassergey.block.fork",
-                                          qos: .userInitiated,
-                                          attributes: DispatchQueue.Attributes.concurrent,
-                                          autoreleaseFrequency: DispatchQueue.AutoreleaseFrequency.inherit,
-                                          target: nil)
-    
-    private var _isBusy: Bool = false
-    
-    init(id: Int, isBusy: Bool) {
-        self.id = id
-        self._isBusy = isBusy
-    }
-    
+struct Fork {
     let id: Int
-    var isBusy: Bool {
-        set {
-            dispathBlockQueue.async(flags: .barrier) { [unowned self] in
-                if(self._isBusy == newValue) {
-                    print("strange case")
-                }
-                self._isBusy = newValue
-            }
-        }
-        get {
-            var isBusyTemp = true
-            dispathBlockQueue.sync { [unowned self] in
-                isBusyTemp = self._isBusy
-            }
-            return isBusyTemp
-        }
-    }
+    var isBusy: Bool
 }
 
 let forks = [Fork(id: 1, isBusy: false),
@@ -127,25 +98,25 @@ let forks = [Fork(id: 1, isBusy: false),
              Fork(id: 5, isBusy: false)]
 
 let philosophers = [Philosopher(name: "1",
-                                eatingTime: 5,
+                                eatingTime: 2,
                                 restingTimeAfterEating: 2,
                                 restingTimeAfterFailToEat: 1,
-                                forkLeft:forks[2],
+                                forkLeft:forks[0],
                                 forkRight:forks[1]),
                     Philosopher(name: "2",
-                                eatingTime: 5,
+                                eatingTime: 2,
                                 restingTimeAfterEating: 2,
                                 restingTimeAfterFailToEat: 2,
                                 forkLeft:forks[1],
                                 forkRight:forks[2]),
                     Philosopher(name: "3",
-                                eatingTime: 5,
+                                eatingTime: 3,
                                 restingTimeAfterEating: 2,
                                 restingTimeAfterFailToEat: 2,
                                 forkLeft:forks[2],
                                 forkRight:forks[3]),
                     Philosopher(name: "4",
-                                eatingTime: 5,
+                                eatingTime: 4,
                                 restingTimeAfterEating: 2,
                                 restingTimeAfterFailToEat: 2,
                                 forkLeft:forks[3],
@@ -155,7 +126,7 @@ let philosophers = [Philosopher(name: "1",
                                 restingTimeAfterEating: 2,
                                 restingTimeAfterFailToEat: 2,
                                 forkLeft:forks[4],
-                                forkRight:forks[1])]
+                                forkRight:forks[0])]
 
 func configureTimerWithPhilosopher(_ philosopher: Philosopher) -> DispatchSourceTimer {
     let dispatchSourceTimer = DispatchSource.makeTimerSource(queue: DispatchQueue.global(qos: .userInitiated))
