@@ -21,7 +21,7 @@ class ViewController: UIViewController {
             case restingAfterFailToEat
         }
         
-        class Philosopher {
+        class Philosopher: NSObject {
             let name: String
             
             let eatingTime: Int
@@ -41,6 +41,7 @@ class ViewController: UIViewController {
                 self.restingTimeAfterFailToEat = restingTimeAfterFailToEat
                 self.forkLeft = forkLeft
                 self.forkRight = forkRight
+                super.init()
             }
             
             func tick() {
@@ -48,8 +49,8 @@ class ViewController: UIViewController {
                 if self.state == .eating {
                     if(self.currentTickCounter == self.eatingTime) {
                         print("Philosopher \(name) put fork \(self.forkLeft.id) and fork \(self.forkRight.id)")
-                        self.forkLeft.isBusy = false
-                        self.forkRight.isBusy = false
+                        self.forkLeft.setPhilosopher(nil)
+                        self.forkRight.setPhilosopher(nil)
                         self.state = .restingAfterEating
                         self.currentTickCounter = 0
                     }
@@ -57,7 +58,7 @@ class ViewController: UIViewController {
                 }
                 if self.state == .restingAfterEating {
                     if(self.currentTickCounter == self.restingTimeAfterEating) {
-                        if ((!self.forkLeft.isBusy) && (!self.forkRight.isBusy)) {
+                        if ((!self.forkLeft.setPhilosopher(self)) && (!self.forkRight.setPhilosopher(self))) {
                             self.eatWithFork(self.forkLeft)
                             self.eatWithFork(self.forkRight)
                             return
@@ -70,7 +71,7 @@ class ViewController: UIViewController {
                 }
                 if self.state == .restingAfterFailToEat {
                     if(self.currentTickCounter == self.restingTimeAfterEating) {
-                        if ((!self.forkLeft.isBusy) && (!self.forkRight.isBusy)) {
+                        if ((!self.forkLeft.setPhilosopher(self)) && (!self.forkRight.setPhilosopher(self))) {
                             self.eatWithFork(self.forkLeft)
                             self.eatWithFork(self.forkRight)
                             return
@@ -84,7 +85,6 @@ class ViewController: UIViewController {
             }
             
             private func eatWithFork(_ fork: Fork) {
-                fork.isBusy = true
                 self.state = .eating
                 self.currentTickCounter = 0
                 print("Philosopher \(name) took fork \(fork.id)")
@@ -92,40 +92,37 @@ class ViewController: UIViewController {
         }
         
         class Fork {
-            private var _isBusy = false
             let isolationQueue: DispatchQueue
             let id: Int
-            var isBusy: Bool {
-                get {
-                    var newValue = false
-                    self.isolationQueue.sync {
-                        newValue = _isBusy
+            
+            private(set) var philosopher: Philosopher?
+            
+            @discardableResult
+            func setPhilosopher(_ philosopher: Philosopher?) -> Bool {
+                var result = false
+                isolationQueue.sync {
+                    if (self.philosopher != nil) && (philosopher != nil) && (self.philosopher == philosopher) {
+                        result = false
+                        return
                     }
-                    return newValue
+                    self.philosopher = philosopher
+                    result = true
                 }
-                set(newBusyStatus) {
-                    if (_isBusy == newBusyStatus) {
-                        print("Strange case")
-                    }
-                    self.isolationQueue.sync {
-                        _isBusy = newBusyStatus
-                    }
-                }
+                return result
             }
             
-            init(id: Int, isBusy: Bool) {
+            init(id: Int) {
                 self.id = id
-                self._isBusy = isBusy
                 self.isolationQueue = DispatchQueue(label: "ForkIsolationQueue \(self.id)")
             }
         }
         
         let mutualQueue = DispatchQueue(label: "ForksIsolationQueue")
-        let forks = [Fork(id: 1, isBusy: false),
-                     Fork(id: 2, isBusy: false),
-                     Fork(id: 3, isBusy: false),
-                     Fork(id: 4, isBusy: false),
-                     Fork(id: 5, isBusy: false)]
+        let forks = [Fork(id: 1),
+                     Fork(id: 2),
+                     Fork(id: 3),
+                     Fork(id: 4),
+                     Fork(id: 5)]
         
         let philosophers = [Philosopher(name: "1",
                                         eatingTime: 3,
