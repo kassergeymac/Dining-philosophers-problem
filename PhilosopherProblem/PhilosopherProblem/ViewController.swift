@@ -92,28 +92,24 @@ class ViewController: UIViewController {
         }
         
         class Fork {
-            let isolationQueue: DispatchQueue
+            let semaphore = DispatchSemaphore(value: 1)
             let id: Int
-            
             private(set) var philosopher: Philosopher?
             
             @discardableResult
             func setPhilosopher(_ philosopher: Philosopher?) -> Bool {
-                var result = false
-                isolationQueue.sync {
-                    if (self.philosopher != nil) && (philosopher != nil) && (self.philosopher == philosopher) {
-                        result = false
-                        return
-                    }
-                    self.philosopher = philosopher
-                    result = true
+                self.semaphore.wait()
+                if (self.philosopher != nil) && (philosopher != nil) && (self.philosopher == philosopher) {
+                    self.semaphore.signal()
+                    return false
                 }
-                return result
+                self.philosopher = philosopher
+                self.semaphore.signal()
+                return true
             }
             
             init(id: Int) {
                 self.id = id
-                self.isolationQueue = DispatchQueue(label: "ForkIsolationQueue \(self.id)")
             }
         }
         
