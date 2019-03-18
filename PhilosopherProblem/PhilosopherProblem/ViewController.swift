@@ -23,10 +23,20 @@ class ViewController: UIViewController {
         
         class Philosopher: NSObject {
             let name: String
+            var dispatchSourceTimer: DispatchSourceTimer?
             
             let eatingTime: Int
             let restingTimeAfterEating: Int
             let restingTimeAfterFailToEat: Int
+            
+            var failToEatCounter: Int = 0 {
+                didSet {
+                    if failToEatCounter == 5 {
+                        print("Philosopher \(name) died")
+                        self.dispatchSourceTimer?.cancel()
+                    }
+                }
+            }
             
             var forkLeft: Fork
             var forkRight: Fork
@@ -64,6 +74,7 @@ class ViewController: UIViewController {
                             return
                         }
                         print("Philosopher \(name) failed to eat.")
+                        self.failToEatCounter = self.failToEatCounter + 1
                         self.state = .restingAfterFailToEat
                         self.currentTickCounter = 0
                     }
@@ -78,6 +89,7 @@ class ViewController: UIViewController {
                         }
                         print("Philosopher \(name) failed to eat.")
                         self.state = .restingAfterFailToEat
+                        self.failToEatCounter = self.failToEatCounter + 1
                         self.currentTickCounter = 0
                     }
                     return
@@ -88,6 +100,14 @@ class ViewController: UIViewController {
                 self.state = .eating
                 self.currentTickCounter = 0
                 print("Philosopher \(name) took fork \(fork.id)")
+            }
+            
+            func configureTimerWithPhilosopher() {
+                let dispatchSourceTimer = DispatchSource.makeTimerSource(queue: DispatchQueue.global(qos: .userInitiated))
+                dispatchSourceTimer.schedule(deadline: DispatchTime.now(), repeating: 1)
+                dispatchSourceTimer.setEventHandler(handler: { self.tick() })
+                dispatchSourceTimer.resume()
+                self.dispatchSourceTimer = dispatchSourceTimer
             }
         }
         
@@ -113,7 +133,6 @@ class ViewController: UIViewController {
             }
         }
         
-        let mutualQueue = DispatchQueue(label: "ForksIsolationQueue")
         let forks = [Fork(id: 1),
                      Fork(id: 2),
                      Fork(id: 3),
@@ -151,20 +170,13 @@ class ViewController: UIViewController {
                                         forkLeft:forks[4],
                                         forkRight:forks[0])]
         
-        func configureTimerWithPhilosopher(_ philosopher: Philosopher) -> DispatchSourceTimer {
-            let dispatchSourceTimer = DispatchSource.makeTimerSource(queue: DispatchQueue.global(qos: .userInitiated))
-            dispatchSourceTimer.schedule(deadline: DispatchTime.now(), repeating: 1)
-            dispatchSourceTimer.setEventHandler(handler: { philosopher.tick() })
-            dispatchSourceTimer.resume()
-            return dispatchSourceTimer
-        }
         
         //это для мемори менеджмента, просто смиритесь
-        savedTimers = [configureTimerWithPhilosopher(philosophers[0]),
-                       configureTimerWithPhilosopher(philosophers[1]),
-                       configureTimerWithPhilosopher(philosophers[2]),
-                       configureTimerWithPhilosopher(philosophers[3]),
-                       configureTimerWithPhilosopher(philosophers[4])]
+        philosophers[0].configureTimerWithPhilosopher()
+        philosophers[1].configureTimerWithPhilosopher()
+        philosophers[2].configureTimerWithPhilosopher()
+        philosophers[3].configureTimerWithPhilosopher()
+        philosophers[4].configureTimerWithPhilosopher()
 
     }
 
