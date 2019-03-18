@@ -104,30 +104,31 @@ class ViewController: UIViewController {
                     return newValue
                 }
                 set(newBusyStatus) {
+                    if (_isBusy == newBusyStatus) {
+                        print("Strange case")
+                    }
                     self.isolationQueue.sync {
                         _isBusy = newBusyStatus
                     }
                 }
             }
             
-            init(id: Int, isBusy: Bool, targetIsolationQueue: DispatchQueue) {
+            init(id: Int, isBusy: Bool) {
                 self.id = id
                 self._isBusy = isBusy
-                self.isolationQueue = DispatchQueue(label: "ForkIsolationQueue", attributes: .initiallyInactive)
-                self.isolationQueue.setTarget(queue: targetIsolationQueue)
-                self.isolationQueue.activate()
+                self.isolationQueue = DispatchQueue(label: "ForkIsolationQueue \(self.id)")
             }
         }
         
         let mutualQueue = DispatchQueue(label: "ForksIsolationQueue")
-        let forks = [Fork(id: 1, isBusy: false, targetIsolationQueue: mutualQueue),
-                     Fork(id: 2, isBusy: false, targetIsolationQueue: mutualQueue),
-                     Fork(id: 3, isBusy: false, targetIsolationQueue: mutualQueue),
-                     Fork(id: 4, isBusy: false, targetIsolationQueue: mutualQueue),
-                     Fork(id: 5, isBusy: false, targetIsolationQueue: mutualQueue)]
+        let forks = [Fork(id: 1, isBusy: false),
+                     Fork(id: 2, isBusy: false),
+                     Fork(id: 3, isBusy: false),
+                     Fork(id: 4, isBusy: false),
+                     Fork(id: 5, isBusy: false)]
         
         let philosophers = [Philosopher(name: "1",
-                                        eatingTime: 2,
+                                        eatingTime: 3,
                                         restingTimeAfterEating: 2,
                                         restingTimeAfterFailToEat: 1,
                                         forkLeft:forks[0],
