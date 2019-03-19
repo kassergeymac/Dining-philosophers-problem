@@ -120,7 +120,7 @@ class ViewController: UIViewController {
             @discardableResult
             func setPhilosopher(_ philosopher: Philosopher?) -> Bool {
                 self.semaphore.wait()
-                if (self.philosopher != nil) && (philosopher != nil) && (self.philosopher == philosopher) {
+                if (self.philosopher != nil) && (philosopher != nil) && (self.philosopher != philosopher) {
                     self.semaphore.signal()
                     return false
                 }
