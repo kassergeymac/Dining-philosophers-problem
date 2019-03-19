@@ -44,6 +44,8 @@ class ViewController: UIViewController {
             var state: PhilosopherState = PhilosopherState.restingAfterEating
             var currentTickCounter: Int = 0
             
+            var waiter: Waiter!
+            
             init(name: String, eatingTime: Int, restingTimeAfterEating: Int, restingTimeAfterFailToEat: Int, forkLeft:Fork, forkRight:Fork) {
                 self.name = name
                 self.eatingTime = eatingTime
@@ -69,13 +71,15 @@ class ViewController: UIViewController {
                 }
                 if self.state == .restingAfterEating {
                     if(self.currentTickCounter == self.restingTimeAfterEating) {
-                        if ((!self.forkLeft.setPhilosopher(self)) && (!self.forkRight.setPhilosopher(self))) {
+                        if (self.waiter.allowedTake(leftFork: self.forkLeft,
+                                                    rightFork: self.forkRight,
+                                                    forPhilosopher: self)) {
                             self.eatWithFork(self.forkLeft)
                             self.eatWithFork(self.forkRight)
                             return
                         }
-                        self.forkLeft.unsetPhilosopher(self)
-                        self.forkRight.unsetPhilosopher(self)
+                        //self.forkLeft.unsetPhilosopher(self)
+                        //self.forkRight.unsetPhilosopher(self)
                         print("Philosopher \(name) failed to eat.")
                         self.failToEatCounter = self.failToEatCounter + 1
                         self.state = .restingAfterFailToEat
@@ -85,13 +89,15 @@ class ViewController: UIViewController {
                 }
                 if self.state == .restingAfterFailToEat {
                     if(self.currentTickCounter == self.restingTimeAfterEating) {
-                        if ((!self.forkLeft.setPhilosopher(self)) && (!self.forkRight.setPhilosopher(self))) {
+                        if (self.waiter.allowedTake(leftFork: self.forkLeft,
+                                                    rightFork: self.forkRight,
+                                                    forPhilosopher: self)) {
                             self.eatWithFork(self.forkLeft)
                             self.eatWithFork(self.forkRight)
                             return
                         }
-                        self.forkLeft.unsetPhilosopher(self)
-                        self.forkRight.unsetPhilosopher(self)
+                        //self.forkLeft.unsetPhilosopher(self)
+                        //self.forkRight.unsetPhilosopher(self)
                         print("Philosopher \(name) failed to eat.")
                         self.state = .restingAfterFailToEat
                         self.failToEatCounter = self.failToEatCounter + 1
@@ -117,31 +123,33 @@ class ViewController: UIViewController {
         }
         
         class Fork {
-            let semaphore = DispatchSemaphore(value: 1)
+            //let semaphore = DispatchSemaphore(value: 1)
             let id: Int
             private(set) var philosopher: Philosopher?
+            var leftFork: Fork?
+            var rightFork: Fork?
             
             @discardableResult
             func setPhilosopher(_ philosopher: Philosopher) -> Bool {
-                self.semaphore.wait()
+                //self.semaphore.wait()
                 if (self.philosopher != nil) && (self.philosopher != philosopher) {
-                    self.semaphore.signal()
+                    //self.semaphore.signal()
                     return false
                 }
                 self.philosopher = philosopher
-                self.semaphore.signal()
+                //self.semaphore.signal()
                 return true
             }
             
             @discardableResult
             func unsetPhilosopher(_ philosopher: Philosopher) -> Bool {
-                self.semaphore.wait()
+                //self.semaphore.wait()
                 if (self.philosopher != philosopher) {
-                    self.semaphore.signal()
+                    //self.semaphore.signal()
                     return false
                 }
                 self.philosopher = nil
-                self.semaphore.signal()
+                //self.semaphore.signal()
                 return true
             }
             
@@ -156,6 +164,41 @@ class ViewController: UIViewController {
                      Fork(id: 4),
                      Fork(id: 5)]
         
+        class Waiter {
+            let forks: [Fork]
+            
+            init(forks: [Fork]) {
+                self.forks = forks
+                self.setAdjustmentForFork()
+            }
+            
+            func setAdjustmentForFork() {
+                for i in 1...(forks.count-2) {
+                    forks[i].leftFork = forks[i-1]
+                    forks[i].rightFork = forks[i+1]
+                }
+                if(forks.count>2) {
+                    forks[0].leftFork = forks[forks.count - 1]
+                    forks[0].rightFork = forks[1]
+                    forks[forks.count - 1].rightFork = forks[forks.count-2]
+                    forks[forks.count - 1].leftFork = forks[0]
+                }
+            }
+            
+            func allowedTake(leftFork: Fork,
+                             rightFork: Fork,
+                             forPhilosopher philosopher: Philosopher) -> Bool {
+                if ((leftFork.philosopher == nil) && (rightFork.philosopher == nil)) {
+                    leftFork.setPhilosopher(philosopher)
+                    rightFork.setPhilosopher(philosopher)
+                    return true
+                }
+                return false
+            }
+        }
+        
+        let waiter = Waiter(forks: forks)
+        
         let philosophers = [Philosopher(name: "1",
                                         eatingTime: 3,
                                         restingTimeAfterEating: 2,
@@ -165,28 +208,31 @@ class ViewController: UIViewController {
                             Philosopher(name: "2",
                                         eatingTime: 3,
                                         restingTimeAfterEating: 2,
-                                        restingTimeAfterFailToEat: 2,
+                                        restingTimeAfterFailToEat: 1,
                                         forkLeft:forks[1],
                                         forkRight:forks[2]),
                             Philosopher(name: "3",
                                         eatingTime: 4,
                                         restingTimeAfterEating: 2,
-                                        restingTimeAfterFailToEat: 2,
+                                        restingTimeAfterFailToEat: 1,
                                         forkLeft:forks[2],
                                         forkRight:forks[3]),
                             Philosopher(name: "4",
                                         eatingTime: 5,
                                         restingTimeAfterEating: 2,
-                                        restingTimeAfterFailToEat: 2,
+                                        restingTimeAfterFailToEat: 1,
                                         forkLeft:forks[3],
                                         forkRight:forks[4]),
                             Philosopher(name: "5",
                                         eatingTime: 6,
                                         restingTimeAfterEating: 2,
-                                        restingTimeAfterFailToEat: 2,
+                                        restingTimeAfterFailToEat: 1,
                                         forkLeft:forks[4],
                                         forkRight:forks[0])]
         
+        for philosopher in philosophers {
+            philosopher.waiter = waiter
+        }
         
         //это для мемори менеджмента, просто смиритесь
         philosophers[0].configureTimerWithPhilosopher()
