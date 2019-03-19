@@ -31,7 +31,7 @@ class ViewController: UIViewController {
             
             var failToEatCounter: Int = 0 {
                 didSet {
-                    if failToEatCounter == 5 {
+                    if failToEatCounter == 10 {
                         print("Philosopher \(name) died")
                         self.dispatchSourceTimer?.cancel()
                     }
