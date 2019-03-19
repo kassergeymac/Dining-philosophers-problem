@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		90A0AB082241AC3700CCE3CD /* Waiter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90A0AB072241AC3700CCE3CD /* Waiter.swift */; };
+		90A0AB0A2241AC6B00CCE3CD /* Fork.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90A0AB092241AC6B00CCE3CD /* Fork.swift */; };
+		90A0AB0C2241ACD900CCE3CD /* Philosopher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90A0AB0B2241ACD900CCE3CD /* Philosopher.swift */; };
 		90DABDDF223EEDDF003C6057 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90DABDDE223EEDDF003C6057 /* AppDelegate.swift */; };
 		90DABDE1223EEDDF003C6057 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90DABDE0223EEDDF003C6057 /* ViewController.swift */; };
 		90DABDE4223EEDDF003C6057 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 90DABDE2223EEDDF003C6057 /* Main.storyboard */; };
@@ -15,6 +18,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		90A0AB072241AC3700CCE3CD /* Waiter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Waiter.swift; sourceTree = "<group>"; };
+		90A0AB092241AC6B00CCE3CD /* Fork.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fork.swift; sourceTree = "<group>"; };
+		90A0AB0B2241ACD900CCE3CD /* Philosopher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Philosopher.swift; sourceTree = "<group>"; };
 		90DABDDB223EEDDF003C6057 /* PhilosopherProblem.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PhilosopherProblem.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		90DABDDE223EEDDF003C6057 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		90DABDE0223EEDDF003C6057 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -60,6 +66,9 @@
 				90DABDE5223EEDE4003C6057 /* Assets.xcassets */,
 				90DABDE7223EEDE4003C6057 /* LaunchScreen.storyboard */,
 				90DABDEA223EEDE4003C6057 /* Info.plist */,
+				90A0AB072241AC3700CCE3CD /* Waiter.swift */,
+				90A0AB092241AC6B00CCE3CD /* Fork.swift */,
+				90A0AB0B2241ACD900CCE3CD /* Philosopher.swift */,
 			);
 			path = PhilosopherProblem;
 			sourceTree = "<group>";
@@ -136,7 +145,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				90DABDE1223EEDDF003C6057 /* ViewController.swift in Sources */,
+				90A0AB082241AC3700CCE3CD /* Waiter.swift in Sources */,
+				90A0AB0C2241ACD900CCE3CD /* Philosopher.swift in Sources */,
 				90DABDDF223EEDDF003C6057 /* AppDelegate.swift in Sources */,
+				90A0AB0A2241AC6B00CCE3CD /* Fork.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

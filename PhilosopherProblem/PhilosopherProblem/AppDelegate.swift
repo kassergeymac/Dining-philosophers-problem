@@ -8,6 +8,8 @@
 
 import UIKit
 
+let semaphore = DispatchSemaphore(value: 1)
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
