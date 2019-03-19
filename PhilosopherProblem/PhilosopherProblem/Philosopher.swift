@@ -65,12 +65,11 @@ class Philosopher: NSObject {
         if self.state == .restingAfterEating {
             if(self.currentTickCounter == self.restingTimeAfterEating) {
                 if (self.waiter.allowedTakeForks()) {
-                    guard self.forkLeft.setPhilosopher(self) && self.forkRight.setPhilosopher(self) else {
+                    if (self.forkLeft.setPhilosopher(self) && self.forkRight.setPhilosopher(self)) {
+                        self.eatWithFork(self.forkLeft)
+                        self.eatWithFork(self.forkRight)
                         return
                     }
-                    self.eatWithFork(self.forkLeft)
-                    self.eatWithFork(self.forkRight)
-                    return
                 }
                 //self.forkLeft.unsetPhilosopher(self)
                 //self.forkRight.unsetPhilosopher(self)
@@ -84,12 +83,11 @@ class Philosopher: NSObject {
         if self.state == .restingAfterFailToEat {
             if(self.currentTickCounter == self.restingTimeAfterEating) {
                 if (self.waiter.allowedTakeForks()) {
-                    guard self.forkLeft.setPhilosopher(self) && self.forkRight.setPhilosopher(self) else {
+                    if (self.forkLeft.setPhilosopher(self) && self.forkRight.setPhilosopher(self)) {
+                        self.eatWithFork(self.forkLeft)
+                        self.eatWithFork(self.forkRight)
                         return
                     }
-                    self.eatWithFork(self.forkLeft)
-                    self.eatWithFork(self.forkRight)
-                    return
                 }
                 //self.forkLeft.unsetPhilosopher(self)
                 //self.forkRight.unsetPhilosopher(self)

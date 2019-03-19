@@ -16,9 +16,7 @@ class Waiter {
     }
     
     func allowedTakeForks() -> Bool {
-        semaphore.wait()
         let takenForksCount = self.forks.filter { $0.philosopher == nil }.count
-        semaphore.signal()
         return takenForksCount != 1
     }
 }
