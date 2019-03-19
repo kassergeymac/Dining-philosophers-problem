@@ -58,6 +58,7 @@ class ViewController: UIViewController {
                 self.currentTickCounter += 1
                 if self.state == .eating {
                     if(self.currentTickCounter == self.eatingTime) {
+                        self.failToEatCounter = 0
                         print("Philosopher \(name) put fork \(self.forkLeft.id) and fork \(self.forkRight.id)")
                         self.forkLeft.setPhilosopher(nil)
                         self.forkRight.setPhilosopher(nil)
