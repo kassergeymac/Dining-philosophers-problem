@@ -60,8 +60,8 @@ class ViewController: UIViewController {
                     if(self.currentTickCounter == self.eatingTime) {
                         self.failToEatCounter = 0
                         print("Philosopher \(name) put fork \(self.forkLeft.id) and fork \(self.forkRight.id)")
-                        self.forkLeft.setPhilosopher(nil)
-                        self.forkRight.setPhilosopher(nil)
+                        self.forkLeft.unsetPhilosopher(self)
+                        self.forkRight.unsetPhilosopher(self)
                         self.state = .restingAfterEating
                         self.currentTickCounter = 0
                     }
@@ -74,6 +74,8 @@ class ViewController: UIViewController {
                             self.eatWithFork(self.forkRight)
                             return
                         }
+                        self.forkLeft.unsetPhilosopher(self)
+                        self.forkRight.unsetPhilosopher(self)
                         print("Philosopher \(name) failed to eat.")
                         self.failToEatCounter = self.failToEatCounter + 1
                         self.state = .restingAfterFailToEat
@@ -88,6 +90,8 @@ class ViewController: UIViewController {
                             self.eatWithFork(self.forkRight)
                             return
                         }
+                        self.forkLeft.unsetPhilosopher(self)
+                        self.forkRight.unsetPhilosopher(self)
                         print("Philosopher \(name) failed to eat.")
                         self.state = .restingAfterFailToEat
                         self.failToEatCounter = self.failToEatCounter + 1
@@ -118,13 +122,25 @@ class ViewController: UIViewController {
             private(set) var philosopher: Philosopher?
             
             @discardableResult
-            func setPhilosopher(_ philosopher: Philosopher?) -> Bool {
+            func setPhilosopher(_ philosopher: Philosopher) -> Bool {
                 self.semaphore.wait()
-                if (self.philosopher != nil) && (philosopher != nil) && (self.philosopher != philosopher) {
+                if (self.philosopher != nil) && (self.philosopher != philosopher) {
                     self.semaphore.signal()
                     return false
                 }
                 self.philosopher = philosopher
+                self.semaphore.signal()
+                return true
+            }
+            
+            @discardableResult
+            func unsetPhilosopher(_ philosopher: Philosopher) -> Bool {
+                self.semaphore.wait()
+                if (self.philosopher != philosopher) {
+                    self.semaphore.signal()
+                    return false
+                }
+                self.philosopher = nil
                 self.semaphore.signal()
                 return true
             }
