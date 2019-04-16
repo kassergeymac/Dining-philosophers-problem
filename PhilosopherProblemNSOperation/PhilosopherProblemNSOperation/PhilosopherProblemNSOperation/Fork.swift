@@ -12,29 +12,19 @@ import Foundation
 class Fork {
     let id: Int
     let semaphore = DispatchSemaphore(value: 1)
-    private(set) var philosopher: Philosopher?
+    private(set) var pickedUp: Bool = true
     
     @discardableResult
-    func setPhilosopher(_ philosopher: Philosopher) -> Bool {
+    func pickUp() -> Bool {
         semaphore.wait()
-        if (self.philosopher != nil) && (self.philosopher != philosopher) {
-            semaphore.signal()
-            return false
-        }
-        self.philosopher = philosopher
-        semaphore.signal()
+        self.pickedUp = true
         return true
     }
     
     @discardableResult
-    func unsetPhilosopher(_ philosopher: Philosopher) -> Bool {
-        semaphore.wait()
-        if (self.philosopher != philosopher) {
-            semaphore.signal()
-            return false
-        }
-        self.philosopher = nil
+    func pickDown() -> Bool {
         semaphore.signal()
+        self.pickedUp = false
         return true
     }
     

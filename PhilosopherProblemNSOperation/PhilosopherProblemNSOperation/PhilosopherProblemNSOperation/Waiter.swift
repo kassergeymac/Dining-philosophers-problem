@@ -16,7 +16,7 @@ class Waiter {
     }
     
     func allowedTakeForks() -> Bool {
-        let takenForksCount = self.forks.filter { $0.philosopher == nil }.count
+        let takenForksCount = self.forks.filter { $0.pickedUp == false }.count
         return takenForksCount != 1
     }
 }

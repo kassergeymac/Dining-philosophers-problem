@@ -55,8 +55,8 @@ class Philosopher: NSObject {
             if(self.currentTickCounter == self.eatingTime) {
                 self.failToEatCounter = 0
                 print("Philosopher \(name) put fork \(self.forkLeft.id) and fork \(self.forkRight.id)")
-                self.forkLeft.unsetPhilosopher(self)
-                self.forkRight.unsetPhilosopher(self)
+                self.forkLeft.pickDown()
+                self.forkRight.pickDown()
                 self.state = .restingAfterEating
                 self.currentTickCounter = 0
             }
@@ -65,14 +65,14 @@ class Philosopher: NSObject {
         if self.state == .restingAfterEating {
             if(self.currentTickCounter == self.restingTimeAfterEating) {
                 if (self.waiter.allowedTakeForks()) {
-                    if (self.forkLeft.setPhilosopher(self) && self.forkRight.setPhilosopher(self)) {
+                    if (self.forkLeft.pickUp() && self.forkRight.pickUp()) {
                         self.eatWithFork(self.forkLeft)
                         self.eatWithFork(self.forkRight)
                         return
                     }
                 }
-                self.forkLeft.unsetPhilosopher(self)
-                self.forkRight.unsetPhilosopher(self)
+                self.forkLeft.pickDown()
+                self.forkRight.pickDown()
                 print("Philosopher \(name) failed to eat.")
                 self.failToEatCounter = self.failToEatCounter + 1
                 self.state = .restingAfterFailToEat
@@ -83,14 +83,14 @@ class Philosopher: NSObject {
         if self.state == .restingAfterFailToEat {
             if(self.currentTickCounter == self.restingTimeAfterEating) {
                 if (self.waiter.allowedTakeForks()) {
-                    if (self.forkLeft.setPhilosopher(self) && self.forkRight.setPhilosopher(self)) {
+                    if (self.forkLeft.pickUp() && self.forkRight.pickUp()) {
                         self.eatWithFork(self.forkLeft)
                         self.eatWithFork(self.forkRight)
                         return
                     }
                 }
-                self.forkLeft.unsetPhilosopher(self)
-                self.forkRight.unsetPhilosopher(self)
+                self.forkLeft.pickDown()
+                self.forkRight.pickDown()
                 print("Philosopher \(name) failed to eat.")
                 self.state = .restingAfterFailToEat
                 self.failToEatCounter = self.failToEatCounter + 1
