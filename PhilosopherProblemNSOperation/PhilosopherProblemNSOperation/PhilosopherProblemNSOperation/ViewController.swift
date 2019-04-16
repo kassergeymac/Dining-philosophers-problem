@@ -11,6 +11,7 @@ import UIKit
 class ViewController: UIViewController {
     
     var philosophers: [Philosopher]!
+    let operationQueue = OperationQueue()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -58,11 +59,13 @@ class ViewController: UIViewController {
             philosopher.waiter = waiter
         }
         
-        philosophers[0].configureTimerWithPhilosopher()
-        philosophers[1].configureTimerWithPhilosopher()
-        philosophers[2].configureTimerWithPhilosopher()
-        philosophers[3].configureTimerWithPhilosopher()
-        philosophers[4].configureTimerWithPhilosopher()
+        
+        self.operationQueue.maxConcurrentOperationCount = philosophers.count
+        self.operationQueue.addOperation(philosophers[0].configureTimerWithPhilosopher())
+        self.operationQueue.addOperation(philosophers[1].configureTimerWithPhilosopher())
+        self.operationQueue.addOperation(philosophers[2].configureTimerWithPhilosopher())
+        self.operationQueue.addOperation(philosophers[3].configureTimerWithPhilosopher())
+        self.operationQueue.addOperation(philosophers[4].configureTimerWithPhilosopher())
 
     }
 

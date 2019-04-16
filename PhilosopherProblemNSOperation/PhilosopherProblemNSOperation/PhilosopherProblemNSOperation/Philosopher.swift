@@ -16,7 +16,7 @@ enum PhilosopherState {
 
 class Philosopher: NSObject {
     let name: String
-    var dispatchSourceTimer: DispatchSourceTimer?
+    private(set) var operation: PhilosopherOperation?
     
     let eatingTime: Int
     let restingTimeAfterEating: Int
@@ -26,7 +26,7 @@ class Philosopher: NSObject {
         didSet {
             if failToEatCounter == 10 {
                 print("Philosopher \(name) died")
-                self.dispatchSourceTimer?.cancel()
+                self.operation?.cancel()
             }
         }
     }
@@ -71,8 +71,8 @@ class Philosopher: NSObject {
                         return
                     }
                 }
-                self.forkLeft.pickDown()
-                self.forkRight.pickDown()
+                //self.forkLeft.pickDown()
+                //self.forkRight.pickDown()
                 print("Philosopher \(name) failed to eat.")
                 self.failToEatCounter = self.failToEatCounter + 1
                 self.state = .restingAfterFailToEat
@@ -89,8 +89,8 @@ class Philosopher: NSObject {
                         return
                     }
                 }
-                self.forkLeft.pickDown()
-                self.forkRight.pickDown()
+                //self.forkLeft.pickDown()
+                //self.forkRight.pickDown()
                 print("Philosopher \(name) failed to eat.")
                 self.state = .restingAfterFailToEat
                 self.failToEatCounter = self.failToEatCounter + 1
@@ -106,11 +106,21 @@ class Philosopher: NSObject {
         print("Philosopher \(name) took fork \(fork.id)")
     }
     
-    func configureTimerWithPhilosopher() {
-        let dispatchSourceTimer = DispatchSource.makeTimerSource(queue: DispatchQueue.global(qos: .userInitiated))
-        dispatchSourceTimer.schedule(deadline: DispatchTime.now(), repeating: 1)
-        dispatchSourceTimer.setEventHandler(handler: { self.tick() })
-        dispatchSourceTimer.resume()
-        self.dispatchSourceTimer = dispatchSourceTimer
+    func configureTimerWithPhilosopher() -> Operation {
+        self.operation = PhilosopherOperation()
+        self.operation?.philosopher = self
+        return self.operation!
     }
+}
+
+class PhilosopherOperation: Operation {
+    var philosopher: Philosopher? = nil
+    
+    override func main() {
+        while true {
+            self.philosopher?.tick()
+            sleep(1)
+        }
+    }
+    
 }
