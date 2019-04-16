@@ -71,8 +71,8 @@ class Philosopher: NSObject {
                         return
                     }
                 }
-                //self.forkLeft.unsetPhilosopher(self)
-                //self.forkRight.unsetPhilosopher(self)
+                self.forkLeft.unsetPhilosopher(self)
+                self.forkRight.unsetPhilosopher(self)
                 print("Philosopher \(name) failed to eat.")
                 self.failToEatCounter = self.failToEatCounter + 1
                 self.state = .restingAfterFailToEat
@@ -89,8 +89,8 @@ class Philosopher: NSObject {
                         return
                     }
                 }
-                //self.forkLeft.unsetPhilosopher(self)
-                //self.forkRight.unsetPhilosopher(self)
+                self.forkLeft.unsetPhilosopher(self)
+                self.forkRight.unsetPhilosopher(self)
                 print("Philosopher \(name) failed to eat.")
                 self.state = .restingAfterFailToEat
                 self.failToEatCounter = self.failToEatCounter + 1

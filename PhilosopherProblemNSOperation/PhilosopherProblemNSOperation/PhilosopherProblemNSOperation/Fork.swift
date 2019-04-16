@@ -16,25 +16,25 @@ class Fork {
     
     @discardableResult
     func setPhilosopher(_ philosopher: Philosopher) -> Bool {
-        //semaphore.wait()
+        semaphore.wait()
         if (self.philosopher != nil) && (self.philosopher != philosopher) {
-            //semaphore.signal()
+            semaphore.signal()
             return false
         }
         self.philosopher = philosopher
-        //semaphore.signal()
+        semaphore.signal()
         return true
     }
     
     @discardableResult
     func unsetPhilosopher(_ philosopher: Philosopher) -> Bool {
-        //semaphore.wait()
+        semaphore.wait()
         if (self.philosopher != philosopher) {
-            //semaphore.signal()
+            semaphore.signal()
             return false
         }
         self.philosopher = nil
-        //semaphore.signal()
+        semaphore.signal()
         return true
     }
     
