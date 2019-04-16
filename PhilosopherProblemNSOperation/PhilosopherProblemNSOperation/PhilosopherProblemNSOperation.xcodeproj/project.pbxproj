@@ -12,6 +12,9 @@
 		90093E9922664C4000E0612F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 90093E9722664C4000E0612F /* Main.storyboard */; };
 		90093E9B22664C4200E0612F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 90093E9A22664C4200E0612F /* Assets.xcassets */; };
 		90093E9E22664C4200E0612F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 90093E9C22664C4200E0612F /* LaunchScreen.storyboard */; };
+		90093EA82266552900E0612F /* Waiter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90093EA52266552900E0612F /* Waiter.swift */; };
+		90093EA92266552900E0612F /* Fork.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90093EA62266552900E0612F /* Fork.swift */; };
+		90093EAA2266552900E0612F /* Philosopher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90093EA72266552900E0612F /* Philosopher.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -22,6 +25,9 @@
 		90093E9A22664C4200E0612F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		90093E9D22664C4200E0612F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		90093E9F22664C4200E0612F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		90093EA52266552900E0612F /* Waiter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Waiter.swift; sourceTree = "<group>"; };
+		90093EA62266552900E0612F /* Fork.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Fork.swift; sourceTree = "<group>"; };
+		90093EA72266552900E0612F /* Philosopher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Philosopher.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -54,6 +60,9 @@
 		90093E9222664C4000E0612F /* PhilosopherProblemNSOperation */ = {
 			isa = PBXGroup;
 			children = (
+				90093EA62266552900E0612F /* Fork.swift */,
+				90093EA72266552900E0612F /* Philosopher.swift */,
+				90093EA52266552900E0612F /* Waiter.swift */,
 				90093E9322664C4000E0612F /* AppDelegate.swift */,
 				90093E9522664C4000E0612F /* ViewController.swift */,
 				90093E9722664C4000E0612F /* Main.storyboard */,
@@ -136,7 +145,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				90093E9622664C4000E0612F /* ViewController.swift in Sources */,
+				90093EA82266552900E0612F /* Waiter.swift in Sources */,
+				90093EAA2266552900E0612F /* Philosopher.swift in Sources */,
 				90093E9422664C4000E0612F /* AppDelegate.swift in Sources */,
+				90093EA92266552900E0612F /* Fork.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
